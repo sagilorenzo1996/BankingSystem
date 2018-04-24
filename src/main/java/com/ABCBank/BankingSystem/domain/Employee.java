@@ -35,7 +35,7 @@ public class Employee implements Serializable{
     private String position;
 
     @NotNull
-    private  Long brandId;
+    private  Long branchId;
 
     @Column(nullable = false,updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -95,12 +95,12 @@ public class Employee implements Serializable{
         this.position = position;
     }
 
-    public Long getBrandId() {
-        return brandId;
+    public Long getBranchId() {
+        return branchId;
     }
 
-    public void setBrandId(Long brandId) {
-        this.brandId = brandId;
+    public void setBranchId(Long branchId) {
+        this.branchId = branchId;
     }
 
     public Date getCreatedAt() {
