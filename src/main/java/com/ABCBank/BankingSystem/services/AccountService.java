@@ -5,6 +5,8 @@ import com.ABCBank.BankingSystem.repo.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 public class AccountService {
     private AccountRepository accountRepository;
@@ -18,6 +20,7 @@ public class AccountService {
 
     }
 
+    @Transactional
     public String loginService(String nic, String password){
         Account account=accountRepository.findByNicAndPassword(nic,password);
         if (account!=null){
