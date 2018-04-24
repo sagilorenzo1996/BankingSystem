@@ -44,13 +44,16 @@ public class TransactionController {
         ManageAccount withdraw=new ManageAccount();
         HandleAccount handleAccount=new HandleAccount();
         if(account.isPresent()==false){
-            throw new ResourceNotFoundException("acccount not found");
+            throw new ResourceNotFoundException("account not found");
         }
         if(employee.isPresent()==false){
             throw new ResourceNotFoundException("employee not found");
         }
         Optional<Branch> branch=branchRepository.findById(employee.get().getBranchId());
-
+        BigDecimal balance=account.get().getBalance().subtract(amount);
+        if(balance.signum()<0){
+            throw new ResourceNotFoundException("balance less than zero");
+        }
         withdraw.setAccountId(account.get().getId());
         withdraw.setBranchId(branch.get().getId());
         withdraw.setAmount(amount);
@@ -60,7 +63,6 @@ public class TransactionController {
         withdraw.setDepositorNic("withdraw");
         manageAccountRepository.save(withdraw);
 
-        BigDecimal balance=account.get().getBalance().subtract(amount);
         account.get().setBalance(balance);
         accountRepository.save(account.get());
 

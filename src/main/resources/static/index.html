@@ -16,7 +16,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body>
-<div class="container text-center">
+<div class="container text-center" id="login">
     <form class="form-signin" id="employeeLoginForm">
         <img class="mb-4" src="images/Student-login-icon.png" alt="" width="200px" height="200px">
         ;
@@ -28,33 +28,157 @@
         <label for="employeePassword" class="sr-only">Password</label>
         <input type="password" class="form-control" placeholder="Password" id="employeePassword" required>
 
-        <div style="display: none;" id="failalert"></div>
+        <div id="failalert"></div>
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
         <p class="mt-5 mb-3 text-muted">&copy; 2017-2018</p>
     </form>
-    <script>
-        $(document).ready(function(){
-            $('#employeeLoginForm').on('submit', function(e){
-                var employeeLoginData={};
-                $('#failalert').html("sdssdsd");
-                e.preventDefault();
+</div>
+<div style="display:none" class="container-fluid text-center" id="transactionPage">
+    <h1 class="h3 display-4">ABC Banking</h1>
+    <br>
+    <div class="row">
+        <div class="col-sm-5">
+            <p>
+                <a class="btn btn-primary" data-toggle="collapse" href="#searchTarget" role="button" aria-expanded="false" aria-controls="searchTarget">
+                    <span class="glyphicon glyphicon-search"></span>Search Account
+                </a>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addTarget" aria-expanded="false" aria-controls="addTarget">
+                    <span class="glyphicon glyphicon-plus"></span>Add Account
+                </button>
+                <button class="btn btn-primary" type="button">
+                    <span class="glyphicon glyphicon-remove"></span>Logout
+                </button>
+            </p>
+            <div class="collapse" id="addTarget">
+                <div class="card card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+            </div>
+            <div class="collapse" id="searchTarget">
+                <div class="card card-body">
+                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <form id="transactionform">
+                <div class="form-row">
+                    <div class="col-sm-7">
+                        <label for="transactionType">Transaction Type</label>
+                        <select class="form-control" id="transactionType" oninput="if($('#transactionType').val()=='Deposit'){$('#depositors').show();}else {$('#depositors').hide();}">
+                            <option selected>Withdraw</option>
+                            <option>Deposit</option>
+                        </select>
+                    </div>
+                    <div class="col-sm-5">
+                        <label for="transactionAccountId">Account Id</label>
+                        <input type="number" class="form-control" id="transactionAccountId" placeholder="Account Id" required>
+                    </div>
+                </div>
+                <br>
+                <div class="form-row ">
+                    <label class="col-sm-4" for="transactionAmount">Transaction Amount</label>
+                    <input type="number" class="form-control col-sm-8" id="transactionAmount" placeholder="Transaction Amount" required>
+                </div>
+                <br>
+                <div class="form-row" style="display: none;" id="depositors">
+                    <input type="text" class="form-control col-sm-4" id="transactionDepositorNic" placeholder="Depositor NIC">
+                    <div class="col-sm-1"></div>
+                    <input type="text" class="form-control col-sm-7" id="transactionDepositorName" placeholder="Depositor Name">
+                </div>
+                <br>
+                <div class="form-row">
+                    <div class="col-sm-7"></div>
+                    <button type="submit" class="btn btn-primary btn-large col-sm-5">Submit</button>
+                </div>
+                <br>
+                <div class="row">
+                    <div id="transactionfailalert" class="col-sm-12"></div>
+                </div>
+                <input type="hidden" id="empID" name="empId">
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    $('#transactionPage').hide();
+    $(document).ready(function(){
+        $('#employeeLoginForm').on('submit', function(e){
+            var employeeLoginData={};
+            employeeLoginData["username"]=$('#employeeId').val();
+            employeeLoginData["password"]=$('#employeePassword').val();
+            $('#failalert').html("<div class=\"alert alert-secondary\" role=\"alert\">\n" +
+                "  Fetching data\n" +
+                "</div>");
+            e.preventDefault();
+            $.ajax({
+                url:'http://localhost:8080/login/employee',
+                type: 'POST',
+                contentType:"application/json",
+                dataType:"json",
+                data: JSON.stringify(employeeLoginData),
+                success:function(data,status){
+                    $('#login').hide();
+                    $('#transactionPage').show();
+                    $('#empID').val(data.id);
+                    console.log('Data: ' + data + 'Status: '+status+'message');
+                },
+                error: function (e) {
+
+                    $('#failalert').html("<div class=\"alert alert-danger\" role=\"alert\">\n" +
+                        "  Login Error,Check credentials\n" +
+                        "</div>");
+                }
+            });
+            console.log("dsdsdsd");
+        });
+
+        $('#transactionform').on('submit', function(e){
+
+            $('#transactionfailalert').html("<div class=\"alert alert-secondary col-sm-12\" role=\"alert\">\n" +
+                "  Waiting\n" +
+                "</div>");
+            e.preventDefault();
+            var accId=$('#transactionAccountId').val();
+            var type=$('#transactionAccountType').val();
+            var amount=$('#transactionAmount').val();
+            var depositorName=$('#transactionDepositorName').val();
+            var depositorNic=$('#transactionDepositorNic').val();
+            var empId=$('#empID').val();
+            var url="";
+            if(type=='Deposit'){
+                url='action/withdraw/'+accId+'/'+depositorName+'/'+depositorNic+'/'+type+'/'+amount+'/'+empId;
+            }
+            else {
+                url='action/withdraw/'+accId+'/'+type+'/'+amount+'/'+empId;
+            }
+            if(amount>0){
                 $.ajax({
-                    url:'http://localhost:8080/login/employee',
+                    url:url,
                     type: 'POST',
                     contentType:"application/json",
                     dataType:"json",
-                    data: JSON.stringify(employeeLoginData),
                     success:function(data,status){
-                        console.log('Data: ' + data + 'Status: '+status+'message');
+                        $('#transactionfailalert').html("<div class=\"alert alert-success col-sm-12\" role=\"alert\">\n" +
+                            "  Transaction Successful\n" +
+                            "</div>");
                     },
                     error: function (e) {
-                        console.log('sdsds'+e.message)
+                        var error=e.responseJSON.message;
+                        $('#transactionfailalert').html("<div class=\"alert alert-danger col-sm-12\" role=\"alert\">"+error+"</div>");
+                        console.log(e.responseJSON.message);
                     }
                 });
-                console.log("dsdsdsd");
-            });
+            }
+            else {
+                $('#transactionfailalert').html("<div class=\"alert alert-danger\" role=\"alert\">\n" +
+                    "  Amount cannot be zero\n" +
+                    "</div>");
+            }
+
+            console.log("dsdsdsd");
         });
-    </script>
-</div>
+    });
+</script>
 </body>
 </html>
