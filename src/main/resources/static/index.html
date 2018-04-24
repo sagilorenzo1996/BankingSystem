@@ -56,7 +56,28 @@
             </div>
             <div class="collapse" id="searchTarget">
                 <div class="card card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                    <input type="search" class="form-control col-sm-12" oninput="
+                        $.ajax({
+                        url:'http://localhost:8080/Account/'+this.val(),
+                        type: 'GET',
+                        contentType:'application/json',
+                            dataType:'json',
+                            success:function(data,status){
+
+                            console.log('Data: ' + data + 'Status: '+status+'message');
+                            },
+                            error: function (e) {
+
+                        }
+                        });
+                        "><br>
+                    <ul class="list-group">
+                        <li class="list-group-item">Cras justo odio</li>
+                        <li class="list-group-item">Dapibus ac facilisis in</li>
+                        <li class="list-group-item">Morbi leo risus</li>
+                        <li class="list-group-item">Porta ac consectetur ac</li>
+                        <li class="list-group-item">Vestibulum at eros</li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -140,14 +161,14 @@
                 "</div>");
             e.preventDefault();
             var accId=$('#transactionAccountId').val();
-            var type=$('#transactionAccountType').val();
+            var type=$('#transactionType').val();
             var amount=$('#transactionAmount').val();
             var depositorName=$('#transactionDepositorName').val();
             var depositorNic=$('#transactionDepositorNic').val();
             var empId=$('#empID').val();
             var url="";
             if(type=='Deposit'){
-                url='action/withdraw/'+accId+'/'+depositorName+'/'+depositorNic+'/'+type+'/'+amount+'/'+empId;
+                url='action/deposit/'+accId+'/'+depositorName+'/'+depositorNic+'/'+amount+'/'+empId;
             }
             else {
                 url='action/withdraw/'+accId+'/'+type+'/'+amount+'/'+empId;
