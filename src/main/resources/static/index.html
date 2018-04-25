@@ -51,32 +51,87 @@
             </p>
             <div class="collapse" id="addTarget">
                 <div class="card card-body">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                    <form id="createAccountForm">
+                        <div class="form-row">
+                            <input class="form-control" type="text" id="firstName" placeholder="first name" required >
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <input class="form-control" type="text" id="lastName" placeholder="last name" required >
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <input class="form-control" type="text" id="accNic" placeholder="NIC" required >
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <input class="form-control" type="password" id="accPassword" placeholder="password" required >
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <select class="form-control" id="accountType">
+                                <option>savings</option>
+                                <option>main</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <textarea class="form-control" id="accAddress" rows="2" placeholder="address"></textarea>
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <input class="form-control" type="text" id="accOccupation" placeholder="occupation" required >
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <input class="form-control" type="date" id="dateOfBirth" placeholder="DOB" required >
+                        </div>
+                        <br>
+                        <div class="form-row">
+                            <input class="form-control" type="tel" id="contactNumber" placeholder="tel" required >
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">add account</button>
+                    </form>
                 </div>
             </div>
             <div class="collapse" id="searchTarget">
                 <div class="card card-body">
-                    <input type="search" class="form-control col-sm-12" oninput="
+                    <input type="search" placeholder="Search" id="searchbox" class="form-control col-sm-12" oninput="
                         $.ajax({
-                        url:'http://localhost:8080/Account/'+this.val(),
+                        url:'http://localhost:8080/Account/'+$('#searchbox').val(),
                         type: 'GET',
                         contentType:'application/json',
                             dataType:'json',
                             success:function(data,status){
-
-                            console.log('Data: ' + data + 'Status: '+status+'message');
+                                $('#searchresult').show();
+                                $('#fname').html('First name - '+data.firstName);
+                                $('#lname').html('Last name - '+data.lastName);
+                                $('#nic').html('NIC - '+data.nic);
+                                $('#password').html('Password - '+data.password);
+                                $('#address').html('Address - '+data.address);
+                                $('#occupation').html('Occupation - '+data.occupation);
+                                $('#contactno').html('Tel - '+data.contactNumber);
+                                $('#dob').html('DOB - '+data.dateOfBirth);
+                                $('#acctype').html('Type - '+data.accountType);
+                                console.log('Data: ' + data + 'Status: '+status+'message');
                             },
                             error: function (e) {
-
+                                $('#searchresult').hide();
+                                console.log('not found');
                         }
                         });
                         "><br>
-                    <ul class="list-group">
-                        <li class="list-group-item">Cras justo odio</li>
-                        <li class="list-group-item">Dapibus ac facilisis in</li>
-                        <li class="list-group-item">Morbi leo risus</li>
-                        <li class="list-group-item">Porta ac consectetur ac</li>
-                        <li class="list-group-item">Vestibulum at eros</li>
+                    <ul class="list-group" id="searchresult">
+                        <li class="list-group-item" id="fname">First Name:</li>
+                        <li class="list-group-item" id="lname"></li>
+                        <li class="list-group-item" id="nic"></li>
+                        <li class="list-group-item" id="password"></li>
+                        <li class="list-group-item" id="address"></li>
+                        <li class="list-group-item" id="occupation"></li>
+                        <li class="list-group-item" id="contactno"></li>
+                        <li class="list-group-item" id="dob"></li>
+                        <li class="list-group-item" id="acctype"></li>
                     </ul>
                 </div>
             </div>
@@ -123,7 +178,39 @@
 </div>
 <script>
     $('#transactionPage').hide();
+    $('#searchresult').hide();
     $(document).ready(function(){
+        $('#createAccountForm').on('submit', function(e){
+            var accountCreateData={};
+            accountCreateData["firstName"]=$('#firstName').val();
+            accountCreateData["password"]=$('#accPassword').val();
+            accountCreateData["lastName"]=$('#lastName').val();
+            accountCreateData["nic"]=$('#accNic').val();
+            accountCreateData["accountType"]=$('#accountType').val();
+            accountCreateData["address"]=$('#accAddress').val();
+            accountCreateData["occupation"]=$('#accOccupation').val();
+            accountCreateData["dateOfBirth"]=$('#dateOfBirth').val();
+            accountCreateData["contactNumber"]=$('#contactNumber').val();
+            e.preventDefault();
+            $.ajax({
+                url:'http://localhost:8080/Account/createAccount',
+                type: 'POST',
+                contentType:"application/json",
+                dataType:"json",
+                data: JSON.stringify(accountCreateData),
+                success:function(data,status){
+                    $('#transactionfailalert').html("<div class=\"alert alert-success col-sm-12\" role=\"alert\">\n" +
+                        "  Account created\n" +
+                        "</div>");
+                    console.log('Data: ' + data + 'Status: '+status+'message');
+                },
+                error: function (e) {
+
+                    var error=e.responseJSON.message;
+                    $('#transactionfailalert').html("<div class=\"alert alert-danger col-sm-12\" role=\"alert\">"+error+"</div>");
+                }
+            });
+        });
         $('#employeeLoginForm').on('submit', function(e){
             var employeeLoginData={};
             employeeLoginData["username"]=$('#employeeId').val();
