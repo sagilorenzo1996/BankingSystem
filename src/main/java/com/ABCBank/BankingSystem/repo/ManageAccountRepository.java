@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ManageAccountRepository extends CrudRepository<ManageAccount, Long> {
+    Iterable<ManageAccount> findAllByAccountId(Long accountId);
 }

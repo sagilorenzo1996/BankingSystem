@@ -107,5 +107,11 @@ public class TransactionController {
         return deposit;
     }
 
+    @GetMapping("/log/{id}")
+    public Iterable<ManageAccount> getTransactions(@RequestParam Long id){
+        Iterable<ManageAccount> transactions=manageAccountRepository.findAllByAccountId(id);
+        return transactions;
+    }
+
 
 }
