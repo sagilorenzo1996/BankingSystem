@@ -7,10 +7,7 @@ import com.ABCBank.BankingSystem.repo.AccountRepository;
 import com.ABCBank.BankingSystem.repo.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityExistsException;
 import javax.validation.Valid;
@@ -26,6 +23,7 @@ public class LoginController {
     @Autowired
     EmployeeRepository employeeRepository;
 
+    @CrossOrigin
     @PostMapping("/user")
     public Account userLogin(@Valid @RequestBody Login login)throws ResourceNotFoundException{
             Account account=accountRepository.findByNic(login.getUsername());
@@ -40,6 +38,7 @@ public class LoginController {
             }
     }
 
+    @CrossOrigin
     @PostMapping("/employee")
     public Employee employeeLogin(@Valid @RequestBody Login login)throws ResourceNotFoundException{
         Long empId=Long.parseLong(login.getUsername());

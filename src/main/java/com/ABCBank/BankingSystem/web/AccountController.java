@@ -20,6 +20,7 @@ public class AccountController {
     @Autowired
     AccountRepository accountRepository;
 
+    @CrossOrigin
     @PostMapping("/createAccount")
     public Account createAccount(@Valid @RequestBody Account account)throws EntityExistsException{
         Account duplicate=accountRepository.findByNicAndAccountType(account.getNic(),account.getAccountType());
@@ -29,6 +30,7 @@ public class AccountController {
         return accountRepository.save(account);
     }
 
+    @CrossOrigin
     @DeleteMapping("/deleteAccount/{id}")
     public void deleteAccount(@PathVariable Long id)throws ResourceNotFoundException{
         Optional<Account> account=accountRepository.findById(id);
@@ -38,16 +40,17 @@ public class AccountController {
         accountRepository.delete(account.get());
     }
 
+    @CrossOrigin
     @PutMapping("/update/{id}")
-    public void updateAccount(@PathVariable Long id)throws ResourceNotFoundException{
+    public Account updateAccount(@PathVariable Long id)throws ResourceNotFoundException{
         Optional<Account> account=accountRepository.findById(id);
         if(account.isPresent()==false){
             throw new ResourceNotFoundException("account not found");
         }
-        accountRepository.save(account.get());
+        return accountRepository.save(account.get());
     }
 
-
+    @CrossOrigin
     @GetMapping("/{nic}")
     public Account getAccountDetailsByNic(@PathVariable(value = "nic") String nic)throws ResourceNotFoundException{
         Account account = accountRepository.findByNic(nic);
@@ -57,6 +60,7 @@ public class AccountController {
         return account;
     }
 
+    @CrossOrigin
     @DeleteMapping("/delete/{nic}")
     public void deleteAccountByNic(@PathVariable(value = "nic") String nic)throws ResourceNotFoundException{
         Account account=accountRepository.findByNic(nic);

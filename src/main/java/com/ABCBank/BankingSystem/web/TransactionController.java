@@ -32,11 +32,13 @@ public class TransactionController {
     BranchRepository branchRepository;
 
 
+    @CrossOrigin
     @PostMapping("/handleAccount")
     public HandleAccount getAllHandling(@Valid @RequestBody HandleAccount handleAccount){
         return handleAccountRepository.save(handleAccount);
     }
 
+    @CrossOrigin
     @PostMapping("/withdraw/{accId}/{type}/{amount}/{empId}")
     public ManageAccount withdraw(@PathVariable Long accId, @PathVariable String type, @PathVariable BigDecimal amount, @PathVariable Long empId)throws ResourceNotFoundException{
         Optional<Account> account=accountRepository.findById(accId);
@@ -73,6 +75,7 @@ public class TransactionController {
         return withdraw;
     }
 
+    @CrossOrigin
     @PostMapping("/deposit/{accountId}/{depositorName}/{depositorNic}/{amount}/{employeeId}")
     public ManageAccount deposit(@PathVariable Long accountId, @PathVariable String depositorName,@PathVariable String depositorNic, @PathVariable BigDecimal amount, @PathVariable Long employeeId)throws ResourceNotFoundException{
         Optional<Account> account=accountRepository.findById(accountId);
@@ -107,6 +110,7 @@ public class TransactionController {
         return deposit;
     }
 
+    @CrossOrigin
     @GetMapping("/log/{id}")
     public Iterable<ManageAccount> getTransactions(@RequestParam Long id){
         Iterable<ManageAccount> transactions=manageAccountRepository.findAllByAccountId(id);
